@@ -34,6 +34,7 @@ public class CarrinhoController{
 	@PersistenceContext
 	EntityManager manager;
 	
+	//-------------------------------------------------------------------------------------------------
 	@RequestMapping("/adicionarItem")
 	public String adicionarItemNoCarrinho(@RequestParam("id") Integer idLivro, 
 											@RequestParam("formatoLivro") Formato formato)  {
@@ -44,6 +45,7 @@ public class CarrinhoController{
 		return REDIRECT_CARRINHO_LISTAR;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	@RequestMapping("/removerItem")
 	public String removerItemNoCarrinho(@RequestParam("codigo") String codigo, 
 											@RequestParam("formato") Formato formato, 
@@ -56,6 +58,7 @@ public class CarrinhoController{
 		return REDIRECT_CARRINHO_LISTAR;
 	}
 	
+	//-------------------------------------------------------------------------------------------------
 	@RequestMapping("/calcularCep")
 	public String calcularCep(@RequestParam("cepDestino") String novoCepDestino) {
 		
@@ -64,7 +67,7 @@ public class CarrinhoController{
 		return REDIRECT_CARRINHO_LISTAR;
 	}
 	
-	
+	//-------------------------------------------------------------------------------------------------
 	@RequestMapping("/criarPagamento")
 	public String criarPagamento(String numeroCartao, 
 								 String titularCartao, 
@@ -91,17 +94,20 @@ public class CarrinhoController{
 		
 		return REDIRECT_CARRINHO_CONFIRMAR;
 	}
-	
+
+	//-------------------------------------------------------------------------------------------------
 	@RequestMapping("/confirmarPagamento")
 	public String confirmarPagamento() {
 		return JSP_CARRINHO_CONFIRMAR;
 	}
 
 
+	//-------------------------------------------------------------------------------------------------
 	private boolean ehStringVazia(String string) {
 		return string == null || string.trim().isEmpty();
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	@RequestMapping("/finalizar")
 	@Transactional
 	public String finalizarPedido(RedirectAttributes modelo) {
@@ -124,13 +130,17 @@ public class CarrinhoController{
 		return REDIRECT_CARRINHO_LISTAR;
 	}
 	
+	//-------------------------------------------------------------------------------------------------
 	@RequestMapping("/listar")
 	public String listar() throws Exception {
 		
-		//verificacao do estoque aqui
+		this.carrinho.verificarDisponibilidadeDosItensComRMI();
 		
 		return JSP_CARRINHO_LISTAR;
 	}
 	
+	
+	
+	//-------------------------------------------------------------------------------------------------
 }
 

@@ -2,6 +2,7 @@ package br.com.caelum.livraria.modelo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.rmi.Naming;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashSet;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import br.com.caelum.estoque.rmi.EstoqueRMI;
+import br.com.caelum.estoque.rmi.ItemEstoque;
 import br.com.caelum.livraria.jms.EnviadorMensagemJms;
 import br.com.caelum.livraria.rest.ClienteRest;
 
@@ -224,4 +227,24 @@ public class Carrinho implements Serializable {
 	public boolean temCartao() {
 		return numeroCartao != null && titularCartao != null;
 	}
+	
+	//-------------------------------------------------------------------------------------------------
+	/**
+	 * Faz lookup de uma chamada remota para cada item de compra para verificar
+	 * o estoque disponível
+	 */
+	public void verificarDisponibilidadeDosItensComRMI() throws Exception{
+		EstoqueRMI estoque = (EstoqueRMI) Naming.lookup("rmi://localhost:1099/estoque");
+		
+		for (ItemCompra itemCompra : itensDeCompra) {
+			if (itemCompra.isImpresso()) {
+				System.out.println("Verificação da quantidade do livro " + itemCompra.getTitulo());
+				
+				ItemEstoque itemEstoque = estoque.getItemEstoque(itemCompra.getCodigo());
+				
+				itemCompra.setQuantidadeNoEstoque(itemEstoque.getQuantidade());
+			}
+		}
+	}
+	//-------------------------------------------------------------------------------------------------
 }
