@@ -264,6 +264,7 @@ public class Carrinho implements Serializable {
 		ItensPeloCodigo parameter = new ItensPeloCodigo();
 		parameter.getCodigo().addAll(codigos);
 		
+		// chama o método getQuantidade da classe EstoqueWS do fj36-webservice
 		ItensPeloCodigoResponse resposta = estoqueWS.itensPeloCodigo(parameter, "TOKEN123");
 		
 		// vem do pacote br.com.caelum.estoque.soap, não mais do RMI
