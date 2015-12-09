@@ -1,6 +1,12 @@
 package br.com.caelum.correios.soap;
 
 import java.math.BigDecimal;
+import java.util.List;
+
+import br.com.caelum.soap.CResultado;
+import br.com.caelum.soap.CServico;
+import br.com.caelum.soap.CalcPrecoPrazoWS;
+import br.com.caelum.soap.CalcPrecoPrazoWSSoap;
 
 public class ConsumidorServicoCorreios {
 
@@ -26,6 +32,29 @@ public class ConsumidorServicoCorreios {
 		String valorFrete = null;
 
 		//chamada do Web Service do Correios aqui
+		// http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl
+		CalcPrecoPrazoWSSoap servico = new CalcPrecoPrazoWS().getCalcPrecoPrazoWSSoap();
+		
+		CResultado resultado = servico.calcPrecoPrazo(semCodigoEmpresa, 
+				                                      semSenhaEmpresa, 
+				                                      codigoSedex, 
+				                                      cepOrigemCaelumSP, 
+				                                      cepDestino, 
+				                                      peso3kg, 
+				                                      formatoEncomendaCaixa, 
+				                                      comprimento20cm, 
+				                                      altura10cm,
+				                                      largura15cm,
+				                                      diametro10cm,
+				                                      semEntregueEmMaos,
+				                                      semValorDeclarado,
+				                                      semAvisoRecebimento);
+		
+		List<CServico> servicosPesquisados = resultado.getServicos().getCServico();
+		
+		valorFrete = servicosPesquisados.get(0).getValor();
+		
+		System.out.printf("Frete para %s é de %s %n", cepDestino, valorFrete);
 
 		return converterParaBigDecimal(valorFrete);
 	}
