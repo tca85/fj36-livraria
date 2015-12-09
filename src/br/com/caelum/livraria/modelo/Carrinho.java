@@ -2,7 +2,6 @@ package br.com.caelum.livraria.modelo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.rmi.Naming;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashSet;
@@ -13,10 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import br.com.caelum.estoque.rmi.EstoqueRMI;
-import br.com.caelum.estoque.rmi.ItemEstoque;
+import br.com.caelum.estoque.soap.EstoqueWS;
+import br.com.caelum.estoque.soap.EstoqueWSService;
+import br.com.caelum.estoque.soap.ItemEstoque;
+import br.com.caelum.estoque.soap.ItensPeloCodigo;
+import br.com.caelum.estoque.soap.ItensPeloCodigoResponse;
 import br.com.caelum.livraria.jms.EnviadorMensagemJms;
 import br.com.caelum.livraria.rest.ClienteRest;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 @Component
 @Scope("session")
@@ -156,17 +161,17 @@ public class Carrinho implements Serializable {
 		return false;
 	}
 
-//	private void atualizarQuantidadeDisponivelDoItemCompra(final ItemEstoque itemEstoque) {
-//		ItemCompra item = Iterables.find(this.itensDeCompra, new Predicate<ItemCompra>() {
-//
-//			@Override
-//			public boolean apply(ItemCompra item) {
-//				return item.temCodigo(itemEstoque.getCodigo());
-//			}
-//		});
-//
-//		item.setQuantidadeNoEstoque(itemEstoque.getQuantidade());
-//	}
+	private void atualizarQuantidadeDisponivelDoItemCompra(final ItemEstoque itemEstoque) {
+		ItemCompra item = Iterables.find(this.itensDeCompra, new Predicate<ItemCompra>() {
+
+			@Override
+			public boolean apply(ItemCompra item) {
+				return item.temCodigo(itemEstoque.getCodigo());
+			}
+		});
+
+		item.setQuantidadeNoEstoque(itemEstoque.getQuantidade());
+	}
 
 	private void limparCarrinho() {
 		this.itensDeCompra = new LinkedHashSet<>();
@@ -233,17 +238,39 @@ public class Carrinho implements Serializable {
 	 * Faz lookup de uma chamada remota para cada item de compra para verificar
 	 * o estoque disponível
 	 */
-	public void verificarDisponibilidadeDosItensComRMI() throws Exception{
-		EstoqueRMI estoque = (EstoqueRMI) Naming.lookup("rmi://localhost:1099/estoque");
+//	public void verificarDisponibilidadeDosItensComRMI() throws Exception{
+//		EstoqueRMI estoque = (EstoqueRMI) Naming.lookup("rmi://localhost:1099/estoque");
+//		
+//		for (ItemCompra itemCompra : itensDeCompra) {
+//			if (itemCompra.isImpresso()) {
+//				System.out.println("Verificação da quantidade do livro " + itemCompra.getTitulo());
+//				
+//				ItemEstoque itemEstoque = estoque.getItemEstoque(itemCompra.getCodigo());
+//				
+//				itemCompra.setQuantidadeNoEstoque(itemEstoque.getQuantidade());
+//			}
+//		}
+//	}
+	
+	//-------------------------------------------------------------------------------------------------
+	/**
+	 * As classes foram geradas automáticamente após usar o wsimport na pasta do projeto
+	 * wsimport -s src -p br.com.caelum.estoque.soap http://localhost:8080/fj36-webservice/EstoqueWS?wsdl
+	 */
+	public void verificarDisponibilidadeDosItensComSOAP(){
+		EstoqueWS estoqueWS = new EstoqueWSService().getEstoqueWSPort();
+		List<String> codigos = this.getCodigosDosItensImpressos();
 		
-		for (ItemCompra itemCompra : itensDeCompra) {
-			if (itemCompra.isImpresso()) {
-				System.out.println("Verificação da quantidade do livro " + itemCompra.getTitulo());
-				
-				ItemEstoque itemEstoque = estoque.getItemEstoque(itemCompra.getCodigo());
-				
-				itemCompra.setQuantidadeNoEstoque(itemEstoque.getQuantidade());
-			}
+		ItensPeloCodigo parameter = new ItensPeloCodigo();
+		parameter.getCodigo().addAll(codigos);
+		
+		ItensPeloCodigoResponse resposta = estoqueWS.itensPeloCodigo(parameter, "TOKEN123");
+		
+		// vem do pacote br.com.caelum.estoque.soap, não mais do RMI
+		List<ItemEstoque> itensNoEstoque = resposta.getItemEstoque();
+		
+		for (final ItemEstoque itemEstoque : itensNoEstoque) {
+			atualizarQuantidadeDisponivelDoItemCompra(itemEstoque);			
 		}
 	}
 	//-------------------------------------------------------------------------------------------------

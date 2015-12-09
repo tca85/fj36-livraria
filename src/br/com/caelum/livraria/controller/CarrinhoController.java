@@ -101,7 +101,6 @@ public class CarrinhoController{
 		return JSP_CARRINHO_CONFIRMAR;
 	}
 
-
 	//-------------------------------------------------------------------------------------------------
 	private boolean ehStringVazia(String string) {
 		return string == null || string.trim().isEmpty();
@@ -134,13 +133,10 @@ public class CarrinhoController{
 	@RequestMapping("/listar")
 	public String listar() throws Exception {
 		
-		this.carrinho.verificarDisponibilidadeDosItensComRMI();
+//		this.carrinho.verificarDisponibilidadeDosItensComRMI();
+		this.carrinho.verificarDisponibilidadeDosItensComSOAP();
 		
 		return JSP_CARRINHO_LISTAR;
 	}
-	
-	
-	
 	//-------------------------------------------------------------------------------------------------
 }
-
