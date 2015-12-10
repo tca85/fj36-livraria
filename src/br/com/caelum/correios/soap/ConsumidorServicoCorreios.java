@@ -32,6 +32,7 @@ public class ConsumidorServicoCorreios {
 		String valorFrete = null;
 
 		//chamada do Web Service do Correios aqui
+		// contract last - cheio de falhas porque não foi pensado corretamente
 		// http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl
 		CalcPrecoPrazoWSSoap servico = new CalcPrecoPrazoWS().getCalcPrecoPrazoWSSoap();
 		
