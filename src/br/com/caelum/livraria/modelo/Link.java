@@ -2,6 +2,10 @@ package br.com.caelum.livraria.modelo;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Link implements Serializable {
 
 	private static final long serialVersionUID = 1L;
