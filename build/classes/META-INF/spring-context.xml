@@ -11,10 +11,10 @@
 						http://www.springframework.org/schema/context/spring-context.xsd
 						http://www.springframework.org/schema/tx 
 						http://www.springframework.org/schema/tx/spring-tx.xsd">
-<!-- 						http://camel.apache.org/schema/spring  -->
-<!-- 						http://camel.apache.org/schema/spring/camel-spring.xsd"> -->
+	<!-- http://camel.apache.org/schema/spring -->
+	<!-- http://camel.apache.org/schema/spring/camel-spring.xsd"> -->
 
-<!-- 	<camel:camelContext /> -->
+	<!-- <camel:camelContext /> -->
 
 	<context:component-scan base-package="br.com.caelum" />
 	<tx:annotation-driven />
@@ -52,41 +52,42 @@
 		<property name="acquireIncrement" value="1" />
 		<property name="maxStatements" value="50" />
 	</bean>
-	
-	
+
+
 	<!-- Configuração para acessar o JMS -->
-<!-- 	<bean id="jmsJndiTemplate" class="org.springframework.jndi.JndiTemplate"> -->
-<!-- 		<property name="environment"> -->
-<!-- 			<props> -->
-<!-- 				<prop key="java.naming.factory.initial"> -->
-<!-- 					org.jboss.naming.remote.client.InitialContextFactory -->
-<!-- 				</prop> -->
-<!-- 				<prop key="java.naming.provider.url"> -->
-<!-- 					http-remoting://localhost:8080 -->
-<!-- 				</prop> -->
-<!-- 			</props> -->
-<!-- 		</property> -->
-<!-- 	</bean> -->
+	<bean id="jmsJndiTemplate" class="org.springframework.jndi.JndiTemplate">
+		<property name="environment">
+			<props>
+				<prop key="java.naming.factory.initial">
+					org.jboss.naming.remote.client.InitialContextFactory
+				</prop>
+				<prop key="java.naming.provider.url">
+					http-remoting://localhost:8080
+				</prop>
+			</props>
+		</property>
+	</bean>
 
-<!-- 	<bean id="hornetQConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean"> -->
-<!-- 		<property name="jndiTemplate" ref="jmsJndiTemplate" /> -->
-<!-- 		<property name="jndiName" value="jms/RemoteConnectionFactory" /> -->
-<!-- 	</bean> -->
+	<bean id="hornetQConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiTemplate" ref="jmsJndiTemplate" />
+		<property name="jndiName" value="jms/RemoteConnectionFactory" />
+	</bean>
 
-<!-- 	<bean id="topicoLivraria" class="org.springframework.jndi.JndiObjectFactoryBean"> -->
-<!-- 		<property name="jndiTemplate" ref="jmsJndiTemplate" /> -->
-<!-- 		<property name="jndiName" value="jms/TOPICO.LIVRARIA" /> -->
-<!-- 	</bean> -->
+	<bean id="topicoLivraria" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiTemplate" ref="jmsJndiTemplate" />
+		<property name="jndiName" value="jms/TOPICO.LIVRARIA" />
+	</bean>
 
 
 	<!-- Configuração do JMS para o Camel -->
-<!-- 	<bean id="camelDestinationResolver" -->
-<!-- 		class="org.springframework.jms.support.destination.JndiDestinationResolver"> -->
-<!-- 		<property name="jndiTemplate" ref="jmsJndiTemplate" /> -->
-<!-- 	</bean> -->
-<!-- 	<bean id="camelJMSConfig" class="org.apache.camel.component.jms.JmsConfiguration"> -->
-<!-- 		<property name="connectionFactory" ref="hornetQConnectionFactory" /> -->
-<!-- 		<property name="destinationResolver" ref="camelDestinationResolver" /> -->
-<!-- 	</bean> -->
+	<!-- <bean id="camelDestinationResolver" -->
+	<!-- class="org.springframework.jms.support.destination.JndiDestinationResolver"> -->
+	<!-- <property name="jndiTemplate" ref="jmsJndiTemplate" /> -->
+	<!-- </bean> -->
+	<!-- <bean id="camelJMSConfig" class="org.apache.camel.component.jms.JmsConfiguration"> -->
+	<!-- <property name="connectionFactory" ref="hornetQConnectionFactory" /> -->
+	<!-- <property name="destinationResolver" ref="camelDestinationResolver" 
+		/> -->
+	<!-- </bean> -->
 
 </beans>
