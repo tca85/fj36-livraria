@@ -24,6 +24,14 @@ import br.com.caelum.livraria.rest.ClienteRest;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
+/**
+ * 
+ * Essa classe faz a chamada do Web Service do jf36-webservice e 
+ * o do cálculo de frete dos Correios
+ * 
+ * @author tca85
+ *
+ */
 @Component
 @Scope("session")
 public class Carrinho implements Serializable {
@@ -44,6 +52,7 @@ public class Carrinho implements Serializable {
 	EnviadorMensagemJms enviador;
 
 
+	//-------------------------------------------------------------------------------------------------
 	public void adicionarOuIncremantarQuantidadeDoItem(Livro livro, Formato formato) {
 
 		ItemCompra item = new ItemCompra(livro, formato);
@@ -58,6 +67,7 @@ public class Carrinho implements Serializable {
 		cancelarPagamento();
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public void removerItemPeloCodigoEFormato(String codigo, Formato formato) {
 
 		ItemCompra itemARemover = procurarItemPelaId(codigo, formato);
@@ -73,6 +83,7 @@ public class Carrinho implements Serializable {
 		cancelarPagamento();
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public Pagamento criarPagamento(String numeroCartao, String nomeTitular) {
 		Transacao transacao = new Transacao();
 		transacao.setNumero(numeroCartao);
@@ -84,11 +95,13 @@ public class Carrinho implements Serializable {
 		return this.pagamento;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	private void cancelarPagamento() {
 		this.pagamento = null;
 		//poderia ter chamada do WS para cancelar o pagamento
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public Pedido finalizarPedido() {
 
 		Pedido pedido = new Pedido();
@@ -104,27 +117,17 @@ public class Carrinho implements Serializable {
 		return pedido;
 	}
 
-	/**
-	 * Atualiza o valor do frete chamando o webservice dos Correios
-	 * http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl
-	 * @param novoCepDestino
-	 */
-	public void atualizarFrete(final String novoCepDestino) {
-		this.cepDestino = novoCepDestino;
-
-		//servico web do correios aqui
-		ConsumidorServicoCorreios servicoCorreios = new ConsumidorServicoCorreios();
-		this.valorFrete = servicoCorreios.calculaFrete(novoCepDestino);
-	}
-
+	//-------------------------------------------------------------------------------------------------
 	public String getCepDestino() {
 		return cepDestino;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public List<ItemCompra> getItensCompra() {
 		return new ArrayList<ItemCompra>(this.itensDeCompra);
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public BigDecimal getTotal() {
 
 		BigDecimal total = BigDecimal.ZERO;
@@ -136,18 +139,22 @@ public class Carrinho implements Serializable {
 		return total.add(valorFrete);
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public Pagamento getPagamento() {
 		return this.pagamento;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public BigDecimal getValorFrete() {
 		return valorFrete;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public boolean isFreteCalculado() {
 		return !this.valorFrete.equals(BigDecimal.ZERO) || !this.isComLivrosImpressos();
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public boolean isPagamentoCriado() {
 		if (this.pagamento == null) {
 			return false;
@@ -155,10 +162,12 @@ public class Carrinho implements Serializable {
 		return this.pagamento.ehCriado();
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public boolean isProntoParaSerFinalizado() {
 		return this.isFreteCalculado() && this.isPagamentoCriado();
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public boolean isComLivrosImpressos() {
 
 		for (ItemCompra itemCompra : this.itensDeCompra) {
@@ -169,6 +178,7 @@ public class Carrinho implements Serializable {
 		return false;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	private void atualizarQuantidadeDisponivelDoItemCompra(final ItemEstoque itemEstoque) {
 		ItemCompra item = Iterables.find(this.itensDeCompra, new Predicate<ItemCompra>() {
 
@@ -181,15 +191,18 @@ public class Carrinho implements Serializable {
 		item.setQuantidadeNoEstoque(itemEstoque.getQuantidade());
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	private void limparCarrinho() {
 		this.itensDeCompra = new LinkedHashSet<>();
 		this.valorFrete = BigDecimal.ZERO;
 	}
-
+	
+	//-------------------------------------------------------------------------------------------------
 	private boolean jaExisteItem(final ItemCompra item) {
 		return this.itensDeCompra.contains(item);
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	private ItemCompra procurarItem(final ItemCompra itemProcurado) {
 		for (ItemCompra item : this.itensDeCompra) {
 			if (item.equals(itemProcurado)) {
@@ -199,6 +212,7 @@ public class Carrinho implements Serializable {
 		throw new IllegalStateException("Item não encontrado");
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	private ItemCompra procurarItemPelaId(final String codigo, Formato formato) {
 
 		for (ItemCompra item : this.itensDeCompra) {
@@ -210,6 +224,7 @@ public class Carrinho implements Serializable {
 		return null;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	@SuppressWarnings("unused")
 	private List<String> getCodigosDosItensImpressos() {
 		List<String> codigos = new ArrayList<>();
@@ -221,22 +236,27 @@ public class Carrinho implements Serializable {
 		return codigos;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public String getNumeroCartao() {
 		return numeroCartao;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public void setNumeroCartao(String numeroCartao) {
 		this.numeroCartao = numeroCartao;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public String getTitularCartao() {
 		return titularCartao;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public void setTitularCartao(String titularCartao) {
 		this.titularCartao = titularCartao;
 	}
 
+	//-------------------------------------------------------------------------------------------------
 	public boolean temCartao() {
 		return numeroCartao != null && titularCartao != null;
 	}
@@ -262,8 +282,13 @@ public class Carrinho implements Serializable {
 	
 	//-------------------------------------------------------------------------------------------------
 	/**
-	 * As classes foram geradas automáticamente após usar o wsimport na pasta do projeto
+	 * As classes (stubs) foram geradas automáticamente após usar o wsimport na pasta do projeto:
+	 * 
 	 * wsimport -s src -p br.com.caelum.estoque.soap http://localhost:8080/fj36-webservice/EstoqueWS?wsdl
+	 * 
+	 * Também poderia ser feito a partir do WSDL
+	 * 
+	 * wsimport -s src Estoque.wsdl
 	 */
 	public void verificarDisponibilidadeDosItensComSOAP(){
 		EstoqueWS estoqueWS = new EstoqueWSService().getEstoqueWSPort();
@@ -281,6 +306,19 @@ public class Carrinho implements Serializable {
 		for (final ItemEstoque itemEstoque : itensNoEstoque) {
 			atualizarQuantidadeDisponivelDoItemCompra(itemEstoque);			
 		}
+	}
+	//-------------------------------------------------------------------------------------------------
+	/**
+	 * Atualiza o valor do frete chamando o webservice dos Correios
+	 * http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl
+	 * @param novoCepDestino
+	 */
+	public void atualizarFrete(final String novoCepDestino) {
+		this.cepDestino = novoCepDestino;
+
+		//servico web do correios aqui
+		ConsumidorServicoCorreios servicoCorreios = new ConsumidorServicoCorreios();
+		this.valorFrete = servicoCorreios.calculaFrete(novoCepDestino);
 	}
 	//-------------------------------------------------------------------------------------------------
 }

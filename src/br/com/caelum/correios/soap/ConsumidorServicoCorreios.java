@@ -8,6 +8,17 @@ import br.com.caelum.soap.CServico;
 import br.com.caelum.soap.CalcPrecoPrazoWS;
 import br.com.caelum.soap.CalcPrecoPrazoWSSoap;
 
+/**
+ * 
+ * Consumindo o serviço para cálculo de valores de frete no Brasil
+ * 
+ * 1 - Gerar o Stub
+ * wsimport -s src/ -d build/ -p br.com.caelum.correios.soap http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL
+ * 
+ * 
+ * @author tca85
+ *
+ */
 public class ConsumidorServicoCorreios {
 
 	private final String codigoSedex = "40010";
@@ -24,6 +35,7 @@ public class ConsumidorServicoCorreios {
 	private final String semCodigoEmpresa = "";
 	private final String semSenhaEmpresa = "";
 
+	//---------------------------------------------------------------------------------------------
 	// Documentacao:
 	// http://www.correios.com.br/webServices/PDF/SCPP_manual_implementacao_calculo_remoto_de_precos_e_prazos.pdf
 	public BigDecimal calculaFrete(String cepDestino) {
@@ -60,13 +72,14 @@ public class ConsumidorServicoCorreios {
 		return converterParaBigDecimal(valorFrete);
 	}
 
+	//---------------------------------------------------------------------------------------------
 	private BigDecimal converterParaBigDecimal(String valor) {
 		return new BigDecimal(valor.replace(',', '.'));
 	}
-
+	
+	//---------------------------------------------------------------------------------------------
 	public String tirarHifenDoCep(String cep) {
 		return cep.replaceAll("-", "");
 	}
-
+	//---------------------------------------------------------------------------------------------
 }
-

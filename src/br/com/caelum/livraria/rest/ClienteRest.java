@@ -15,6 +15,7 @@ import br.com.caelum.livraria.modelo.Transacao;
 
 /**
  * http://localhost:8081/fj36-livraria
+ * 
  * Escolha um livro, adicione no carrinho e insira os dados do cartão
  * Pague com payfast. Finalize o pedido, e depois teste a url do serviço
  * 
