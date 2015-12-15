@@ -33,6 +33,8 @@ public class Pedido implements Serializable {
 	private Calendar data;
 	
 	@OneToMany(cascade=CascadeType.PERSIST)
+	@XmlElementWrapper(name="itens")
+	@XmlElement(name="item")
 	private Set<ItemCompra> itens;
 
 	@OneToOne(cascade=CascadeType.PERSIST)
@@ -43,8 +45,6 @@ public class Pedido implements Serializable {
 		this.itens = itens;
 	}
 
-	@XmlElementWrapper(name="itens")
-	@XmlElement(name="item")
 	public Set<ItemCompra> getItens() {
 		return itens;
 	}
