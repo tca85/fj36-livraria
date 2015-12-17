@@ -10,11 +10,10 @@
 						http://www.springframework.org/schema/context 
 						http://www.springframework.org/schema/context/spring-context.xsd
 						http://www.springframework.org/schema/tx 
-						http://www.springframework.org/schema/tx/spring-tx.xsd">
-	<!-- http://camel.apache.org/schema/spring -->
-	<!-- http://camel.apache.org/schema/spring/camel-spring.xsd"> -->
-
-	<!-- <camel:camelContext /> -->
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+	                    http://camel.apache.org/schema/spring
+	                    http://camel.apache.org/schema/spring/camel-spring.xsd">
+	<camel:camelContext />
 
 	<context:component-scan base-package="br.com.caelum" />
 	<tx:annotation-driven />
@@ -80,14 +79,14 @@
 
 
 	<!-- Configuração do JMS para o Camel -->
-	<!-- <bean id="camelDestinationResolver" -->
-	<!-- class="org.springframework.jms.support.destination.JndiDestinationResolver"> -->
-	<!-- <property name="jndiTemplate" ref="jmsJndiTemplate" /> -->
-	<!-- </bean> -->
-	<!-- <bean id="camelJMSConfig" class="org.apache.camel.component.jms.JmsConfiguration"> -->
-	<!-- <property name="connectionFactory" ref="hornetQConnectionFactory" /> -->
-	<!-- <property name="destinationResolver" ref="camelDestinationResolver" 
-		/> -->
-	<!-- </bean> -->
+	<bean id="camelDestinationResolver"
+		class="org.springframework.jms.support.destination.JndiDestinationResolver">
+		<property name="jndiTemplate" ref="jmsJndiTemplate" />
+	</bean>
+
+	<bean id="camelJMSConfig" class="org.apache.camel.component.jms.JmsConfiguration">
+		<property name="connectionFactory" ref="hornetQConnectionFactory" />
+		<property name="destinationResolver" ref="camelDestinationResolver" />
+	</bean>
 
 </beans>
